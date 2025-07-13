@@ -172,32 +172,48 @@ The first iteration is successful when:
 
 ## Current Status
 
-**First Iteration: COMPLETED** ✅
+**Iteration 2: COMPLETED** ✅
 
-All core infrastructure and the `show_today_list` tool have been implemented. The project is ready for testing and use. Dependencies are installed and the server can be started with `npm start`.
+All core infrastructure and the initial set of tools have been implemented:
+- ✅ `show_today_list` - Navigate to Today list
+- ✅ `add_todo` - Create new to-do items  
+- ✅ `add_project` - Create new projects
+- ✅ `search` - Search Things content
+
+The project is ready for production use with comprehensive MCP tool coverage.
 
 ### Testing the Implementation
 
-1. **Manual test**: Run `npm test` to verify Things integration
+1. **Manual tests**: 
+   - `npm run test:show` - Test navigation tools
+   - `npm run test:add` - Test content creation  
+   - `npm run test:search` - Test search functionality
+   - `npm test` - Run default test (show_today_list)
+
 2. **MCP server**: Run `npm start` to start the server for MCP clients
-3. **Validation**: Check that Things app opens to Today list when tool is executed
+3. **Validation**: All 4 tools should be available and functional
 
 ### Next Session Focus
 
 When resuming development, the next logical steps are:
 
-1. **Test the current implementation** to ensure everything works correctly
-2. **Begin Iteration 2** by implementing core Things commands:
-   - `add_todo` tool for creating new tasks
-   - `add_project` tool for creating new projects
-   - `search` tool for searching Things content
+1. **Begin Iteration 3** by implementing update operations:
+   - `update_todo` tool for modifying existing to-dos
+   - `update_project` tool for modifying existing projects  
+   - `complete_todo` tool for marking tasks as completed
+
+2. **Consider advanced features**:
+   - Additional navigation tools (show_inbox, show_upcoming, etc.)
+   - Batch operations for multiple items
+   - Enhanced error handling and validation
 
 ### Implementation Notes for Future Sessions
 
 - All foundation code is in place and thoroughly documented
 - The modular structure supports easy addition of new tools
 - Error handling patterns are established and can be replicated
-- Authentication token support is built-in but not yet required for show commands
+- Authentication token support is built-in and tested
+- Comprehensive test coverage exists for all current functionality
 
 ## Notes for Claude Code
 

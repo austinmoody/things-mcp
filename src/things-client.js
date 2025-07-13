@@ -151,6 +151,106 @@ export class ThingsClient {
   }
 
   /**
+   * Add a new to-do item to Things
+   * 
+   * This method creates a new to-do item using the Things 'add' command.
+   * The add command supports many parameters for setting title, notes, 
+   * due dates, tags, and more.
+   * 
+   * @param {Object} todoData - The to-do item data
+   * @param {string} todoData.title - The title/name of the to-do (required)
+   * @param {string} [todoData.notes] - Notes or description for the to-do
+   * @param {string} [todoData.when] - When to schedule it (today, tomorrow, evening, etc.)
+   * @param {string} [todoData.deadline] - Due date for the to-do
+   * @param {string} [todoData.tags] - Comma-separated list of tags
+   * @param {string} [todoData.checklist] - Checklist items (line-separated)
+   * @param {string} [todoData.list] - Which list to add to (inbox by default)
+   * @returns {Promise<boolean>} - True if successful
+   */
+  async addTodo(todoData) {
+    // Validate required parameters
+    if (!todoData || !todoData.title) {
+      throw new Error('Todo title is required');
+    }
+
+    // Build parameters object for the URL
+    const params = {
+      title: todoData.title,
+    };
+
+    // Add optional parameters if provided
+    // Only add parameters that have values to keep URLs clean
+    if (todoData.notes) params.notes = todoData.notes;
+    if (todoData.when) params.when = todoData.when;
+    if (todoData.deadline) params.deadline = todoData.deadline;
+    if (todoData.tags) params.tags = todoData.tags;
+    if (todoData.checklist) params.checklist = todoData.checklist;
+    if (todoData.list) params.list = todoData.list;
+
+    return this.executeCommand('add', params);
+  }
+
+  /**
+   * Add a new project to Things
+   * 
+   * This method creates a new project using the Things 'add-project' command.
+   * Projects in Things are containers for organizing related to-dos.
+   * 
+   * @param {Object} projectData - The project data
+   * @param {string} projectData.title - The title/name of the project (required)
+   * @param {string} [projectData.notes] - Notes or description for the project
+   * @param {string} [projectData.when] - When to schedule the project
+   * @param {string} [projectData.deadline] - Due date for the project
+   * @param {string} [projectData.tags] - Comma-separated list of tags
+   * @param {string} [projectData.area] - Which area to add the project to
+   * @param {Array} [projectData.todos] - Array of to-do items to add to the project
+   * @returns {Promise<boolean>} - True if successful
+   */
+  async addProject(projectData) {
+    // Validate required parameters
+    if (!projectData || !projectData.title) {
+      throw new Error('Project title is required');
+    }
+
+    // Build parameters object for the URL
+    const params = {
+      title: projectData.title,
+    };
+
+    // Add optional parameters if provided
+    if (projectData.notes) params.notes = projectData.notes;
+    if (projectData.when) params.when = projectData.when;
+    if (projectData.deadline) params.deadline = projectData.deadline;
+    if (projectData.tags) params.tags = projectData.tags;
+    if (projectData.area) params.area = projectData.area;
+    
+    // Handle todos array - convert to newline-separated string
+    if (projectData.todos && Array.isArray(projectData.todos)) {
+      params.todos = projectData.todos.join('\n');
+    }
+
+    return this.executeCommand('add-project', params);
+  }
+
+  /**
+   * Search for content in Things
+   * 
+   * This method performs a search using the Things 'search' command.
+   * It will open Things and display search results for the given query.
+   * 
+   * @param {string} query - The search query
+   * @returns {Promise<boolean>} - True if successful
+   */
+  async search(query) {
+    // Validate required parameters
+    if (!query || typeof query !== 'string' || query.trim() === '') {
+      throw new Error('Search query is required and must be a non-empty string');
+    }
+
+    return this.executeCommand('search', { query: query.trim() });
+  }
+
+  /**
    * Validate that Things app is available
    * 
    * This method can be used to check if the Things app is installed

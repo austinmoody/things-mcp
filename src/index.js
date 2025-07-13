@@ -25,6 +25,8 @@ import {
 // Import our custom modules
 import { ThingsClient } from './things-client.js';
 import { createShowTools } from './tools/show-tools.js';
+import { createAddTools } from './tools/add-tools.js';
+import { createSearchTools } from './tools/search-tools.js';
 
 /**
  * Main server class that handles MCP protocol communication
@@ -156,9 +158,18 @@ async function main() {
     // Create server instance
     const server = new ThingsMCPServer();
 
-    // Register our show tools (starting with just show_today_list)
+    // Register all our tool categories
+    // Show tools for navigation (show_today_list, etc.)
     const showTools = createShowTools(server.thingsClient);
     server.registerTools(showTools);
+    
+    // Add tools for creating content (add_todo, add_project)
+    const addTools = createAddTools(server.thingsClient);
+    server.registerTools(addTools);
+    
+    // Search tools for finding content (search)
+    const searchTools = createSearchTools(server.thingsClient);
+    server.registerTools(searchTools);
 
     // Start the server
     await server.start();

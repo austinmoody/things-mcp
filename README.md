@@ -50,18 +50,41 @@ The server will start and listen for MCP protocol messages via stdin/stdout. You
 
 Test the functionality directly:
 ```bash
+# Test all functionality
 npm test
+
+# Test specific features
+npm run test:show     # Test navigation tools
+npm run test:add      # Test content creation tools  
+npm run test:search   # Test search functionality
 ```
 
-This runs the manual test script that verifies the Things integration is working correctly.
+These run manual test scripts that verify the Things integration is working correctly.
 
 ### Available Tools
 
 Currently implemented tools:
 
+**Navigation Tools:**
 - **show_today_list**: Navigate to the Things "Today" list view
   - No parameters required
   - Opens Things app and displays today's tasks
+
+**Content Creation Tools:**
+- **add_todo**: Create new to-do items
+  - Required: title
+  - Optional: notes, when, deadline, tags, checklist, list
+  - Creates a new task in Things with specified details
+
+- **add_project**: Create new projects  
+  - Required: title
+  - Optional: notes, when, deadline, tags, area, todos
+  - Creates a new project with optional initial to-dos
+
+**Search Tools:**
+- **search**: Search Things content
+  - Required: query
+  - Opens Things and displays search results for the query
 
 ## Project Structure
 
@@ -73,9 +96,13 @@ things-mcp-server/
 │   ├── index.js              # Main MCP server entry point
 │   ├── things-client.js      # Things URL scheme interface
 │   └── tools/
-│       └── show-tools.js     # Show command implementations
+│       ├── show-tools.js     # Navigation command implementations
+│       ├── add-tools.js      # Content creation tools
+│       └── search-tools.js   # Search functionality
 ├── examples/
-│   └── test-show-today.js    # Manual testing script
+│   ├── test-show-today.js    # Test navigation tools
+│   ├── test-add-todo.js      # Test content creation
+│   └── test-search.js        # Test search functionality
 └── docs/
     └── API.md                # Detailed API documentation
 ```
@@ -144,17 +171,15 @@ This will attempt to open the Things Today list and report success or failure.
 
 ## Roadmap
 
-### Current: Basic Navigation (v1.0)
+### Current: Core Commands (v1.1) ✅
 - ✅ MCP server infrastructure
 - ✅ Things URL scheme integration
 - ✅ show_today_list tool
+- ✅ add_todo: Create new to-dos
+- ✅ add_project: Create new projects
+- ✅ search: Search Things content
 
-### Next: Core Commands (v1.1)
-- [ ] add_todo: Create new to-dos
-- [ ] add_project: Create new projects
-- [ ] search: Search Things content
-
-### Future: Advanced Features
+### Next: Update Operations (v1.2)
 - [ ] Update operations for existing items
 - [ ] Batch operations
 - [ ] Full Things URL scheme support

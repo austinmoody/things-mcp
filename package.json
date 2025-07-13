@@ -9,7 +9,10 @@
   },
   "scripts": {
     "start": "node src/index.js",
-    "test": "node examples/test-show-today.js"
+    "test": "node examples/test-show-today.js",
+    "test:show": "node examples/test-show-today.js",
+    "test:add": "node examples/test-add-todo.js",
+    "test:search": "node examples/test-search.js"
   },
   "keywords": [
     "mcp",
