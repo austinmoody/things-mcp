@@ -1,0 +1,32 @@
+{
+  "name": "things-mcp-server",
+  "version": "1.0.0",
+  "description": "Model Context Protocol (MCP) server for interfacing with the Things app on macOS",
+  "main": "src/index.js",
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node examples/test-show-today.js"
+  },
+  "keywords": [
+    "mcp",
+    "things",
+    "task-management",
+    "macos",
+    "productivity"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "open": "^8.0.0"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": ""
+  }
+}
