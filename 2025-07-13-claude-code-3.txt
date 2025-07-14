@@ -1,0 +1,177 @@
+╭───────────────────────────────────────────────────╮
+│ ✻ Welcome to Claude Code!                         │
+│                                                   │
+│   /help for help, /status for your current setup  │
+│                                                   │
+│   cwd: /Users/moodya/Dev/Personal/things-mcp      │
+╰───────────────────────────────────────────────────╯
+
+ Tips for getting started:
+
+ 1. Run /init to create a CLAUDE.md file with instructions for Claude
+ 2. Use Claude to help with file analysis, editing, bash commands and git
+ 3. Be as specific as you would with another engineer for the best results
+
+> There seems to be an issue with how things get added to Things.  For example, when I use the MCP server to add a project and I enter this as the title:
+
+  Temp Add From MCP
+
+  This is how it shows up in Things:
+
+  Temp+Add+From+MCP
+
+  Can you tell what in the implementation is adding the plus signs?
+
+⏺ I'll investigate the issue where spaces in titles are being replaced with plus signs when adding projects through the MCP server.
+
+⏺ Update Todos
+  ⎿  ☐ Search for MCP server implementation files     
+     ☐ Find where project titles are processed/encoded
+     ☐ Identify the cause of space-to-plus conversion
+
+⏺ Update Todos
+  ⎿  ☐ Search for MCP server implementation files     
+     ☐ Find where project titles are processed/encoded
+     ☐ Identify the cause of space-to-plus conversion
+
+⏺ Search(pattern: "**/*.ts")
+  ⎿  Found 100 files (ctrl+r to expand)
+
+⏺ Search(pattern: "**/*.js")
+  ⎿  Found 100 files (ctrl+r to expand)
+
+⏺ Search(pattern: "add.*project|project.*add")
+  ⎿  Found 7 files (ctrl+r to expand)
+
+⏺ Update Todos
+  ⎿  ☒ Search for MCP server implementation files     
+     ☐ Find where project titles are processed/encoded
+     ☐ Identify the cause of space-to-plus conversion
+
+⏺ Read(src/tools/add-tools.js)
+  ⎿  Read 232 lines (ctrl+r to expand)
+
+⏺ Read(src/index.js)
+  ⎿  Read 189 lines (ctrl+r to expand)
+
+⏺ Now let me check the ThingsClient implementation to see how it handles the URL encoding:
+
+⏺ Read(src/things-client.js)
+  ⎿  Read 267 lines (ctrl+r to expand)
+
+⏺ Update Todos
+  ⎿  ☒ Search for MCP server implementation files     
+     ☒ Find where project titles are processed/encoded
+     ☐ Identify the cause of space-to-plus conversion
+
+⏺ Update Todos
+  ⎿  ☒ Search for MCP server implementation files     
+     ☒ Find where project titles are processed/encoded
+     ☒ Identify the cause of space-to-plus conversion
+
+⏺ The issue is in src/things-client.js:86. When building the URL, the code uses url.searchParams.set(key, String(value)) which automatically URL-encodes the
+  parameters. In URL encoding, spaces are converted to plus signs (+).
+
+  The problem occurs because:
+  1. Your title "Temp Add From MCP" gets passed to url.searchParams.set('title', 'Temp Add From MCP')
+  2. The URL constructor automatically URL-encodes spaces as + signs
+  3. Things receives the encoded title as "Temp+Add+From+MCP"
+
+  To fix this, you need to decode the parameters before sending them to Things, or use a different encoding method that Things expects.
+
+> Can you implement this fix please?
+
+⏺ I'll implement a fix for the URL encoding issue that's converting spaces to plus signs.
+
+⏺ Update Todos
+  ⎿  ☐ Analyze the URL encoding issue and determine best fix approach
+     ☐ Implement fix in ThingsClient buildUrl method
+     ☐ Test the fix to ensure it works correctly
+
+⏺ Update Todos
+  ⎿  ☐ Analyze the URL encoding issue and determine best fix approach
+     ☐ Implement fix in ThingsClient buildUrl method
+     ☐ Test the fix to ensure it works correctly
+
+⏺ The issue is that URLSearchParams.set() automatically URL-encodes parameters, converting spaces to + signs. The best fix is to manually construct the query
+   string using encodeURIComponent() which preserves spaces as %20 instead of +, or to manually decode the plus signs back to spaces.
+
+⏺ Update Todos
+  ⎿  ☒ Analyze the URL encoding issue and determine best fix approach
+     ☐ Implement fix in ThingsClient buildUrl method
+     ☐ Test the fix to ensure it works correctly
+
+⏺ Update(src/things-client.js)
+  ⎿  Updated src/things-client.js with 11 additions and 3 removals                                            
+        72          // Start with the base Things URL and add the command
+        73          const url = new URL(command, this.baseUrl);
+        74          
+        75 +        // Build query string manually to avoid URLSearchParams encoding spaces as '+'
+        76 +        const queryParts = [];
+        77 +        
+        78          // Add authentication token if available and not a simple show command
+        79          // Show commands typically don't require authentication
+        80          if (this.authToken && command !== 'show') {
+        81 -          url.searchParams.set('auth-token', this.authToken);
+        81 +          queryParts.push(`auth-token=${encodeURIComponent(this.authToken)}`);
+        82          }
+        83          
+        84          // Add all other parameters
+        85          // Object.entries() gives us an array of [key, value] pairs
+        86          Object.entries(params).forEach(([key, value]) => {
+        87            if (value !== undefined && value !== null) {
+        88 -            // Convert value to string and add to URL parameters
+        89 -            url.searchParams.set(key, String(value));
+        88 +            // Use encodeURIComponent to properly encode parameters while preserving spaces as %20
+        89 +            queryParts.push(`${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`);
+        90            }
+        91          });
+        92          
+        93 +        // Manually set the search string to avoid URLSearchParams automatic encoding
+        94 +        if (queryParts.length > 0) {
+        95 +          url.search = '?' + queryParts.join('&');
+        96 +        }
+        97 +        
+        98          return url.toString();
+        99        } catch (error) {
+       100          throw new Error(`Failed to build Things URL: ${error.message}`);
+
+⏺ Update Todos
+  ⎿  ☒ Analyze the URL encoding issue and determine best fix approach
+     ☒ Implement fix in ThingsClient buildUrl method
+     ☐ Test the fix to ensure it works correctly
+
+⏺ Let me test the fix by creating a simple test to verify the URL generation:
+
+⏺ Write(test-url-fix.js)
+  ⎿  Wrote 41 lines to test-url-fix.js                     
+     #!/usr/bin/env node
+     /**
+      * Test script to verify the URL encoding fix
+      */
+     import { ThingsClient } from './src/things-client.js';
+     // Create a test client
+     const client = new ThingsClient();
+     … +31 lines (ctrl+r to expand)
+
+⏺ Bash(node test-url-fix.js)
+  ⎿  Generated URL: things:///add-project?title=Temp%20Add%20From%20MCP&notes=Test%20note%20with%20spaces
+     ✅ SUCCESS: Spaces are properly encoded as %20
+
+     … +4 lines (ctrl+r to expand)
+
+⏺ Perfect! Let me clean up the test file and mark the task complete:
+
+⏺ Bash(rm test-url-fix.js)
+  ⎿  (No content)
+
+⏺ Update Todos
+  ⎿  ☒ Analyze the URL encoding issue and determine best fix approach
+     ☒ Implement fix in ThingsClient buildUrl method
+     ☒ Test the fix to ensure it works correctly
+
+⏺ Fixed! The issue was in src/things-client.js:86 where URLSearchParams.set() automatically converts spaces to + signs.
+
+  The fix replaces the automatic URL parameter encoding with manual encoding using encodeURIComponent(), which properly encodes spaces as %20 instead of +.
+  Now when you add a project with the title "Temp Add From MCP", it will appear correctly in Things instead of as "Temp+Add+From+MCP".
+

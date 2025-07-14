@@ -72,20 +72,28 @@ export class ThingsClient {
       // Start with the base Things URL and add the command
       const url = new URL(command, this.baseUrl);
       
+      // Build query string manually to avoid URLSearchParams encoding spaces as '+'
+      const queryParts = [];
+      
       // Add authentication token if available and not a simple show command
       // Show commands typically don't require authentication
       if (this.authToken && command !== 'show') {
-        url.searchParams.set('auth-token', this.authToken);
+        queryParts.push(`auth-token=${encodeURIComponent(this.authToken)}`);
       }
       
       // Add all other parameters
       // Object.entries() gives us an array of [key, value] pairs
       Object.entries(params).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
-          // Convert value to string and add to URL parameters
-          url.searchParams.set(key, String(value));
+          // Use encodeURIComponent to properly encode parameters while preserving spaces as %20
+          queryParts.push(`${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`);
         }
       });
+      
+      // Manually set the search string to avoid URLSearchParams automatic encoding
+      if (queryParts.length > 0) {
+        url.search = '?' + queryParts.join('&');
+      }
       
       return url.toString();
     } catch (error) {
