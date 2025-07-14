@@ -29,6 +29,7 @@ import { createAddTools } from './tools/add-tools.js';
 import { createSearchTools } from './tools/search-tools.js';
 import { createUpdateTools } from './tools/update-tools.js';
 import { createBatchTools } from './tools/batch-tools.js';
+import { createAdvancedTools } from './tools/advanced-tools.js';
 
 /**
  * Main server class that handles MCP protocol communication
@@ -180,6 +181,10 @@ async function main() {
     // Batch tools for efficient multi-item operations (batch_add_todos, batch_complete_todos, batch_update_todos)
     const batchTools = createBatchTools(server.thingsClient);
     server.registerTools(batchTools);
+    
+    // Advanced tools for sophisticated features (search_advanced, create_project_template, json_command, get_things_data)
+    const advancedTools = createAdvancedTools(server.thingsClient);
+    server.registerTools(advancedTools);
 
     // Start the server
     await server.start();

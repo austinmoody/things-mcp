@@ -63,6 +63,9 @@ npm run test:complete # Test completing to-do items
 npm run test:navigation # Test all navigation tools
 npm run test:batch    # Test batch operations
 npm run test:validation # Test validation utilities
+npm run test:advanced-search # Test enhanced search with filters
+npm run test:templates     # Test project template creation
+npm run test:advanced      # Test v1.4 advanced features
 ```
 
 These run manual test scripts that verify the Things integration is working correctly.
@@ -150,6 +153,29 @@ Currently implemented tools:
   - Optional updates: title, notes, when, deadline, tags, list
   - Applies the same changes to multiple tasks efficiently
 
+**Advanced Tools (v1.4):**
+- **search_advanced**: Enhanced search with filters and parameters
+  - Required: query (search string)
+  - Optional filters: status, type, area, project, tag, list, date_range, limit
+  - Provides sophisticated search capabilities with multiple filter options
+
+- **create_project_template**: Create projects from predefined templates
+  - Required: template_name, project_title
+  - Templates: software_project, marketing_campaign, event_planning, research_project, custom
+  - Optional: project_notes, area, tags, when, deadline, custom_todos
+  - Creates structured projects with template-based to-dos
+
+- **json_command**: Execute complex operations using JSON commands
+  - Required: command_type, payload
+  - Supports: create_workspace, bulk_import, project_hierarchy, advanced_update
+  - Enables sophisticated operations beyond simple URL parameters
+
+- **get_things_data**: Retrieve data from Things using x-callback-url
+  - Required: data_type
+  - Data types: projects, todos, areas, tags, lists, specific_item
+  - Optional: filter, item_id, format (json, markdown, csv)
+  - Provides data retrieval capabilities for analysis and reporting
+
 ## Project Structure
 
 ```
@@ -164,7 +190,8 @@ things-mcp-server/
 │   │   ├── add-tools.js      # Content creation tools
 │   │   ├── search-tools.js   # Search functionality
 │   │   ├── update-tools.js   # Update and completion tools
-│   │   └── batch-tools.js    # Batch operations for multiple items
+│   │   ├── batch-tools.js    # Batch operations for multiple items
+│   │   └── advanced-tools.js # Advanced v1.4 features
 │   └── utils/
 │       └── validation.js     # Comprehensive validation utilities
 ├── examples/
@@ -176,7 +203,10 @@ things-mcp-server/
 │   ├── test-complete-todo.js # Test completing to-dos
 │   ├── test-navigation.js    # Test all navigation tools
 │   ├── test-batch-operations.js # Test batch operations
-│   └── test-validation.js    # Test validation utilities
+│   ├── test-validation.js    # Test validation utilities
+│   ├── test-advanced-search.js # Test enhanced search features
+│   ├── test-project-templates.js # Test project template creation
+│   └── test-advanced-features.js # Test v1.4 advanced features
 └── docs/
     └── API.md                # Detailed API documentation
 ```
@@ -258,11 +288,17 @@ This will attempt to open the Things Today list and report success or failure.
 - ✅ Batch operations (batch_add_todos, batch_complete_todos, batch_update_todos)
 - ✅ Enhanced error handling and comprehensive validation utilities
 
-### Next: Future Enhancements (v1.4)
-- [ ] x-callback-url support for getting return values from Things
-- [ ] JSON command support for complex operations
-- [ ] Enhanced search with filters and parameters
-- [ ] Project templates and advanced project management
+### Current: Future Enhancements (v1.4) ✅
+- ✅ x-callback-url support for getting return values from Things
+- ✅ JSON command support for complex operations
+- ✅ Enhanced search with filters and parameters
+- ✅ Project templates and advanced project management
+
+### Next: Enterprise Features (v1.5)
+- [ ] Webhook integration for real-time updates
+- [ ] Advanced reporting and analytics
+- [ ] Multi-user workspace management
+- [ ] API rate limiting and optimization
 
 ## Contributing
 

@@ -363,6 +363,195 @@ export class ThingsClient {
   }
 
   /**
+   * Perform advanced search in Things with filters
+   * 
+   * This method performs a sophisticated search using multiple parameters
+   * and filters to narrow down results in the Things app.
+   * 
+   * @param {Object} searchParams - The search parameters and filters
+   * @param {string} searchParams.query - The search query (required)
+   * @param {string} [searchParams.status] - Filter by completion status
+   * @param {string} [searchParams.type] - Filter by item type
+   * @param {string} [searchParams.area] - Filter by area
+   * @param {string} [searchParams.project] - Filter by project
+   * @param {string} [searchParams.tag] - Filter by tag
+   * @param {string} [searchParams.list] - Filter by list
+   * @param {string} [searchParams.start_date] - Filter start date
+   * @param {string} [searchParams.end_date] - Filter end date
+   * @param {number} [searchParams.limit] - Limit number of results
+   * @returns {Promise<boolean>} - True if successful
+   */
+  async searchAdvanced(searchParams) {
+    // Validate required parameters
+    if (!searchParams || !searchParams.query) {
+      throw new Error('Search query is required for advanced search');
+    }
+
+    // Build parameters object for the URL
+    const params = {
+      query: searchParams.query,
+    };
+
+    // Add filter parameters if provided
+    if (searchParams.status) params.status = searchParams.status;
+    if (searchParams.type) params.type = searchParams.type;
+    if (searchParams.area) params.area = searchParams.area;
+    if (searchParams.project) params.project = searchParams.project;
+    if (searchParams.tag) params.tag = searchParams.tag;
+    if (searchParams.list) params.list = searchParams.list;
+    if (searchParams.start_date) params['start-date'] = searchParams.start_date;
+    if (searchParams.end_date) params['end-date'] = searchParams.end_date;
+    if (searchParams.limit) params.limit = searchParams.limit;
+
+    return this.executeCommand('search', params);
+  }
+
+  /**
+   * Execute JSON command for complex operations
+   * 
+   * This method handles complex JSON-based commands that support
+   * sophisticated operations beyond simple URL parameters.
+   * 
+   * @param {string} commandType - The type of JSON command
+   * @param {Object} payload - The JSON payload for the command
+   * @returns {Promise<boolean>} - True if successful
+   */
+  async executeJsonCommand(commandType, payload) {
+    // Validate required parameters
+    if (!commandType || !payload) {
+      throw new Error('Command type and payload are required for JSON commands');
+    }
+
+    // Convert payload to JSON string for URL parameter
+    const jsonPayload = JSON.stringify(payload);
+    
+    // Build parameters for the JSON command
+    const params = {
+      'command-type': commandType,
+      data: jsonPayload
+    };
+
+    // Use a special 'json-command' endpoint (if supported by Things)
+    // Note: This is a conceptual implementation as Things may not support this directly
+    return this.executeCommand('json-command', params);
+  }
+
+  /**
+   * Retrieve data from Things using x-callback-url
+   * 
+   * This method attempts to retrieve data from Things and return it.
+   * Note: This requires Things app support for data retrieval callbacks.
+   * 
+   * @param {string} dataType - Type of data to retrieve
+   * @param {Object} filter - Filter criteria for data retrieval
+   * @param {string} itemId - Specific item ID (for single item requests)
+   * @param {string} format - Output format for the data
+   * @returns {Promise<boolean>} - True if successful
+   */
+  async getThingsData(dataType, filter = {}, itemId = null, format = 'json') {
+    // Validate required parameters
+    if (!dataType) {
+      throw new Error('Data type is required for data retrieval');
+    }
+
+    // Build parameters for data retrieval
+    const params = {
+      'data-type': dataType,
+      format: format
+    };
+
+    // Add item ID if provided
+    if (itemId) {
+      params.id = itemId;
+    }
+
+    // Add filter parameters if provided
+    if (filter.status) params.status = filter.status;
+    if (filter.area) params.area = filter.area;
+    if (filter.project) params.project = filter.project;
+    if (filter.tag) params.tag = filter.tag;
+    if (filter.date_range) {
+      if (filter.date_range.start) params['start-date'] = filter.date_range.start;
+      if (filter.date_range.end) params['end-date'] = filter.date_range.end;
+    }
+
+    // Add x-callback-url parameters for data return
+    // Note: This would require a local server to receive the callback
+    params['x-callback-url'] = 'things-mcp://callback';
+    params['x-success'] = 'things-mcp://success';
+    params['x-error'] = 'things-mcp://error';
+
+    // Use a special 'get-data' command (conceptual - may not exist in Things)
+    return this.executeCommand('get-data', params);
+  }
+
+  /**
+   * Create a backup export of Things data
+   * 
+   * This method triggers an export operation in Things to create
+   * a backup of user data in various formats.
+   * 
+   * @param {Object} exportOptions - Export configuration options
+   * @param {string} exportOptions.format - Export format (json, csv, xml)
+   * @param {string} [exportOptions.path] - Export file path
+   * @param {Array} [exportOptions.include] - Data types to include
+   * @returns {Promise<boolean>} - True if successful
+   */
+  async exportThingsData(exportOptions) {
+    // Validate required parameters
+    if (!exportOptions || !exportOptions.format) {
+      throw new Error('Export format is required');
+    }
+
+    // Build parameters for export
+    const params = {
+      format: exportOptions.format
+    };
+
+    // Add optional parameters
+    if (exportOptions.path) params.path = exportOptions.path;
+    if (exportOptions.include && Array.isArray(exportOptions.include)) {
+      params.include = exportOptions.include.join(',');
+    }
+
+    // Use export command (conceptual)
+    return this.executeCommand('export', params);
+  }
+
+  /**
+   * Import data into Things from various sources
+   * 
+   * This method handles importing data from external sources
+   * into Things with proper formatting and validation.
+   * 
+   * @param {Object} importOptions - Import configuration options
+   * @param {string} importOptions.source - Import source (file, url, json)
+   * @param {string} importOptions.data - Import data or path
+   * @param {Object} [importOptions.mapping] - Field mapping configuration
+   * @returns {Promise<boolean>} - True if successful
+   */
+  async importThingsData(importOptions) {
+    // Validate required parameters
+    if (!importOptions || !importOptions.source || !importOptions.data) {
+      throw new Error('Import source and data are required');
+    }
+
+    // Build parameters for import
+    const params = {
+      source: importOptions.source,
+      data: importOptions.data
+    };
+
+    // Add mapping if provided
+    if (importOptions.mapping) {
+      params.mapping = JSON.stringify(importOptions.mapping);
+    }
+
+    // Use import command (conceptual)
+    return this.executeCommand('import', params);
+  }
+
+  /**
    * Validate that Things app is available
    * 
    * This method can be used to check if the Things app is installed
