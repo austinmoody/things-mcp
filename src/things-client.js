@@ -259,6 +259,110 @@ export class ThingsClient {
   }
 
   /**
+   * Update an existing to-do item in Things
+   * 
+   * This method updates an existing to-do using the Things 'update' command.
+   * The update command allows modifying various properties of existing items.
+   * 
+   * @param {Object} updateData - The to-do update data
+   * @param {string} updateData.id - The unique identifier of the to-do to update (required)
+   * @param {string} [updateData.title] - New title/name for the to-do
+   * @param {string} [updateData.notes] - New notes or description for the to-do
+   * @param {string} [updateData.when] - When to reschedule the to-do
+   * @param {string} [updateData.deadline] - New due date for the to-do
+   * @param {string} [updateData.tags] - New comma-separated list of tags
+   * @param {string} [updateData.checklist] - New checklist items (line-separated)
+   * @param {string} [updateData.list] - Move to a different list
+   * @returns {Promise<boolean>} - True if successful
+   */
+  async updateTodo(updateData) {
+    // Validate required parameters
+    if (!updateData || !updateData.id) {
+      throw new Error('Todo ID is required for updates');
+    }
+
+    // Build parameters object for the URL
+    const params = {
+      id: updateData.id,
+    };
+
+    // Add optional parameters if provided
+    // For update operations, we need to be careful about undefined vs empty string
+    if (updateData.title !== undefined) params.title = updateData.title;
+    if (updateData.notes !== undefined) params.notes = updateData.notes;
+    if (updateData.when !== undefined) params.when = updateData.when;
+    if (updateData.deadline !== undefined) params.deadline = updateData.deadline;
+    if (updateData.tags !== undefined) params.tags = updateData.tags;
+    if (updateData.checklist !== undefined) params.checklist = updateData.checklist;
+    if (updateData.list !== undefined) params.list = updateData.list;
+
+    return this.executeCommand('update', params);
+  }
+
+  /**
+   * Update an existing project in Things
+   * 
+   * This method updates an existing project using the Things 'update' command.
+   * Projects can have their properties modified just like to-dos.
+   * 
+   * @param {Object} updateData - The project update data
+   * @param {string} updateData.id - The unique identifier of the project to update (required)
+   * @param {string} [updateData.title] - New title/name for the project
+   * @param {string} [updateData.notes] - New notes or description for the project
+   * @param {string} [updateData.when] - When to reschedule the project
+   * @param {string} [updateData.deadline] - New due date for the project
+   * @param {string} [updateData.tags] - New comma-separated list of tags
+   * @param {string} [updateData.area] - Move to a different area
+   * @returns {Promise<boolean>} - True if successful
+   */
+  async updateProject(updateData) {
+    // Validate required parameters
+    if (!updateData || !updateData.id) {
+      throw new Error('Project ID is required for updates');
+    }
+
+    // Build parameters object for the URL
+    const params = {
+      id: updateData.id,
+    };
+
+    // Add optional parameters if provided
+    if (updateData.title !== undefined) params.title = updateData.title;
+    if (updateData.notes !== undefined) params.notes = updateData.notes;
+    if (updateData.when !== undefined) params.when = updateData.when;
+    if (updateData.deadline !== undefined) params.deadline = updateData.deadline;
+    if (updateData.tags !== undefined) params.tags = updateData.tags;
+    if (updateData.area !== undefined) params.area = updateData.area;
+
+    return this.executeCommand('update', params);
+  }
+
+  /**
+   * Mark a to-do item as completed in Things
+   * 
+   * This method marks a to-do as completed using the Things 'update' command
+   * with the completed status parameter.
+   * 
+   * @param {Object} completeData - The completion data
+   * @param {string} completeData.id - The unique identifier of the to-do to complete (required)
+   * @returns {Promise<boolean>} - True if successful
+   */
+  async completeTodo(completeData) {
+    // Validate required parameters
+    if (!completeData || !completeData.id) {
+      throw new Error('Todo ID is required for completion');
+    }
+
+    // Build parameters for completing the to-do
+    const params = {
+      id: completeData.id,
+      completed: true, // Mark as completed
+    };
+
+    return this.executeCommand('update', params);
+  }
+
+  /**
    * Validate that Things app is available
    * 
    * This method can be used to check if the Things app is installed

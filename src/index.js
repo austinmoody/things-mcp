@@ -27,6 +27,7 @@ import { ThingsClient } from './things-client.js';
 import { createShowTools } from './tools/show-tools.js';
 import { createAddTools } from './tools/add-tools.js';
 import { createSearchTools } from './tools/search-tools.js';
+import { createUpdateTools } from './tools/update-tools.js';
 
 /**
  * Main server class that handles MCP protocol communication
@@ -170,6 +171,10 @@ async function main() {
     // Search tools for finding content (search)
     const searchTools = createSearchTools(server.thingsClient);
     server.registerTools(searchTools);
+    
+    // Update tools for modifying content (update_todo, update_project, complete_todo)
+    const updateTools = createUpdateTools(server.thingsClient);
+    server.registerTools(updateTools);
 
     // Start the server
     await server.start();

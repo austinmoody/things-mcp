@@ -57,6 +57,9 @@ npm test
 npm run test:show     # Test navigation tools
 npm run test:add      # Test content creation tools  
 npm run test:search   # Test search functionality
+npm run test:update   # Test updating to-do items
+npm run test:update-project  # Test updating projects
+npm run test:complete # Test completing to-do items
 ```
 
 These run manual test scripts that verify the Things integration is working correctly.
@@ -86,6 +89,21 @@ Currently implemented tools:
   - Required: query
   - Opens Things and displays search results for the query
 
+**Update Tools:**
+- **update_todo**: Update existing to-do items
+  - Required: id (Things ID or title)
+  - Optional: title, notes, when, deadline, tags, checklist, list
+  - Modifies properties of an existing to-do
+
+- **update_project**: Update existing projects
+  - Required: id (Things ID or title)
+  - Optional: title, notes, when, deadline, tags, area
+  - Modifies properties of an existing project
+
+- **complete_todo**: Mark to-do items as completed
+  - Required: id (Things ID or title)
+  - Marks the specified to-do as completed
+
 ## Project Structure
 
 ```
@@ -98,11 +116,15 @@ things-mcp-server/
 │   └── tools/
 │       ├── show-tools.js     # Navigation command implementations
 │       ├── add-tools.js      # Content creation tools
-│       └── search-tools.js   # Search functionality
+│       ├── search-tools.js   # Search functionality
+│       └── update-tools.js   # Update and completion tools
 ├── examples/
 │   ├── test-show-today.js    # Test navigation tools
 │   ├── test-add-todo.js      # Test content creation
-│   └── test-search.js        # Test search functionality
+│   ├── test-search.js        # Test search functionality
+│   ├── test-update-todo.js   # Test updating to-dos
+│   ├── test-update-project.js # Test updating projects
+│   └── test-complete-todo.js # Test completing to-dos
 └── docs/
     └── API.md                # Detailed API documentation
 ```
@@ -179,10 +201,15 @@ This will attempt to open the Things Today list and report success or failure.
 - ✅ add_project: Create new projects
 - ✅ search: Search Things content
 
-### Next: Update Operations (v1.2)
-- [ ] Update operations for existing items
-- [ ] Batch operations
-- [ ] Full Things URL scheme support
+### Current: Update Operations (v1.2) ✅
+- ✅ update_todo: Update existing to-do items
+- ✅ update_project: Update existing projects  
+- ✅ complete_todo: Mark to-dos as completed
+
+### Next: Advanced Features (v1.3)
+- [ ] Additional navigation tools (show_inbox, show_upcoming, etc.)
+- [ ] Batch operations for multiple items
+- [ ] Enhanced error handling and validation
 
 ## Contributing
 

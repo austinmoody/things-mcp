@@ -12,7 +12,10 @@
     "test": "node examples/test-show-today.js",
     "test:show": "node examples/test-show-today.js",
     "test:add": "node examples/test-add-todo.js",
-    "test:search": "node examples/test-search.js"
+    "test:search": "node examples/test-search.js",
+    "test:update": "node examples/test-update-todo.js",
+    "test:update-project": "node examples/test-update-project.js",
+    "test:complete": "node examples/test-complete-todo.js"
   },
   "keywords": [
     "mcp",
