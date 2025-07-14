@@ -60,6 +60,9 @@ npm run test:search   # Test search functionality
 npm run test:update   # Test updating to-do items
 npm run test:update-project  # Test updating projects
 npm run test:complete # Test completing to-do items
+npm run test:navigation # Test all navigation tools
+npm run test:batch    # Test batch operations
+npm run test:validation # Test validation utilities
 ```
 
 These run manual test scripts that verify the Things integration is working correctly.
@@ -72,6 +75,34 @@ Currently implemented tools:
 - **show_today_list**: Navigate to the Things "Today" list view
   - No parameters required
   - Opens Things app and displays today's tasks
+
+- **show_inbox**: Navigate to the Things "Inbox" list view
+  - No parameters required
+  - Opens Things app and displays unorganized tasks
+
+- **show_upcoming**: Navigate to the Things "Upcoming" list view
+  - No parameters required
+  - Opens Things app and displays future scheduled tasks
+
+- **show_anytime**: Navigate to the Things "Anytime" list view
+  - No parameters required
+  - Opens Things app and displays tasks scheduled for anytime
+
+- **show_someday**: Navigate to the Things "Someday" list view
+  - No parameters required
+  - Opens Things app and displays someday/maybe tasks
+
+- **show_projects**: Navigate to the Things "Projects" list view
+  - No parameters required
+  - Opens Things app and displays all active projects
+
+- **show_areas**: Navigate to the Things "Areas" list view
+  - No parameters required
+  - Opens Things app and displays all areas of responsibility
+
+- **show_logbook**: Navigate to the Things "Logbook" view
+  - No parameters required
+  - Opens Things app and displays completed tasks and projects
 
 **Content Creation Tools:**
 - **add_todo**: Create new to-do items
@@ -104,6 +135,21 @@ Currently implemented tools:
   - Required: id (Things ID or title)
   - Marks the specified to-do as completed
 
+**Batch Tools:**
+- **batch_add_todos**: Create multiple to-do items at once
+  - Required: todos (array of todo objects)
+  - Optional: Each todo can have title, notes, when, deadline, tags, list
+  - Creates multiple tasks efficiently in a single operation
+
+- **batch_complete_todos**: Mark multiple to-do items as completed
+  - Required: ids (array of todo IDs or titles)
+  - Marks multiple tasks as completed in a single operation
+
+- **batch_update_todos**: Update multiple to-do items with the same changes
+  - Required: ids (array of todo IDs), updates (object with changes)
+  - Optional updates: title, notes, when, deadline, tags, list
+  - Applies the same changes to multiple tasks efficiently
+
 ## Project Structure
 
 ```
@@ -113,18 +159,24 @@ things-mcp-server/
 ├── src/
 │   ├── index.js              # Main MCP server entry point
 │   ├── things-client.js      # Things URL scheme interface
-│   └── tools/
-│       ├── show-tools.js     # Navigation command implementations
-│       ├── add-tools.js      # Content creation tools
-│       ├── search-tools.js   # Search functionality
-│       └── update-tools.js   # Update and completion tools
+│   ├── tools/
+│   │   ├── show-tools.js     # Navigation command implementations
+│   │   ├── add-tools.js      # Content creation tools
+│   │   ├── search-tools.js   # Search functionality
+│   │   ├── update-tools.js   # Update and completion tools
+│   │   └── batch-tools.js    # Batch operations for multiple items
+│   └── utils/
+│       └── validation.js     # Comprehensive validation utilities
 ├── examples/
 │   ├── test-show-today.js    # Test navigation tools
 │   ├── test-add-todo.js      # Test content creation
 │   ├── test-search.js        # Test search functionality
 │   ├── test-update-todo.js   # Test updating to-dos
 │   ├── test-update-project.js # Test updating projects
-│   └── test-complete-todo.js # Test completing to-dos
+│   ├── test-complete-todo.js # Test completing to-dos
+│   ├── test-navigation.js    # Test all navigation tools
+│   ├── test-batch-operations.js # Test batch operations
+│   └── test-validation.js    # Test validation utilities
 └── docs/
     └── API.md                # Detailed API documentation
 ```
@@ -201,15 +253,16 @@ This will attempt to open the Things Today list and report success or failure.
 - ✅ add_project: Create new projects
 - ✅ search: Search Things content
 
-### Current: Update Operations (v1.2) ✅
-- ✅ update_todo: Update existing to-do items
-- ✅ update_project: Update existing projects  
-- ✅ complete_todo: Mark to-dos as completed
+### Current: Advanced Features (v1.3) ✅
+- ✅ Additional navigation tools (show_inbox, show_upcoming, show_anytime, show_someday, show_projects, show_areas, show_logbook)
+- ✅ Batch operations (batch_add_todos, batch_complete_todos, batch_update_todos)
+- ✅ Enhanced error handling and comprehensive validation utilities
 
-### Next: Advanced Features (v1.3)
-- [ ] Additional navigation tools (show_inbox, show_upcoming, etc.)
-- [ ] Batch operations for multiple items
-- [ ] Enhanced error handling and validation
+### Next: Future Enhancements (v1.4)
+- [ ] x-callback-url support for getting return values from Things
+- [ ] JSON command support for complex operations
+- [ ] Enhanced search with filters and parameters
+- [ ] Project templates and advanced project management
 
 ## Contributing
 

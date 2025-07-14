@@ -15,7 +15,10 @@
     "test:search": "node examples/test-search.js",
     "test:update": "node examples/test-update-todo.js",
     "test:update-project": "node examples/test-update-project.js",
-    "test:complete": "node examples/test-complete-todo.js"
+    "test:complete": "node examples/test-complete-todo.js",
+    "test:navigation": "node examples/test-navigation.js",
+    "test:batch": "node examples/test-batch-operations.js",
+    "test:validation": "node examples/test-validation.js"
   },
   "keywords": [
     "mcp",

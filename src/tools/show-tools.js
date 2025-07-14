@@ -67,14 +67,222 @@ export function createShowTools(thingsClient) {
         }
       },
     },
-    
-    // Future show tools can be added here, such as:
-    // - show_inbox_list
-    // - show_upcoming_list  
-    // - show_anytime_list
-    // - show_someday_list
-    // - show_projects_list
-    // - show_areas_list
-    // - show_logbook_list
+
+    {
+      name: "show_inbox",
+      description: "Navigate to the Things app 'Inbox' list view. This opens the Things app and displays all unorganized tasks in the inbox.",
+      
+      inputSchema: {
+        type: "object",
+        properties: {},
+        required: [],
+      },
+      
+      handler: async (args) => {
+        try {
+          if (!thingsClient.isThingsAvailable()) {
+            throw new Error("Things app is not available. Make sure you're running on macOS and Things is installed.");
+          }
+          
+          const success = await thingsClient.showList('inbox');
+          
+          if (success) {
+            return "Successfully opened Things app and navigated to Inbox";
+          } else {
+            throw new Error("Failed to open Inbox in Things app");
+          }
+        } catch (error) {
+          const errorMessage = `Failed to show Inbox: ${error.message}`;
+          console.error(errorMessage);
+          throw new Error(errorMessage);
+        }
+      },
+    },
+
+    {
+      name: "show_upcoming",
+      description: "Navigate to the Things app 'Upcoming' list view. This opens the Things app and displays all tasks scheduled for future dates.",
+      
+      inputSchema: {
+        type: "object",
+        properties: {},
+        required: [],
+      },
+      
+      handler: async (args) => {
+        try {
+          if (!thingsClient.isThingsAvailable()) {
+            throw new Error("Things app is not available. Make sure you're running on macOS and Things is installed.");
+          }
+          
+          const success = await thingsClient.showList('upcoming');
+          
+          if (success) {
+            return "Successfully opened Things app and navigated to Upcoming";
+          } else {
+            throw new Error("Failed to open Upcoming in Things app");
+          }
+        } catch (error) {
+          const errorMessage = `Failed to show Upcoming: ${error.message}`;
+          console.error(errorMessage);
+          throw new Error(errorMessage);
+        }
+      },
+    },
+
+    {
+      name: "show_anytime",
+      description: "Navigate to the Things app 'Anytime' list view. This opens the Things app and displays all tasks scheduled for anytime (no specific date).",
+      
+      inputSchema: {
+        type: "object",
+        properties: {},
+        required: [],
+      },
+      
+      handler: async (args) => {
+        try {
+          if (!thingsClient.isThingsAvailable()) {
+            throw new Error("Things app is not available. Make sure you're running on macOS and Things is installed.");
+          }
+          
+          const success = await thingsClient.showList('anytime');
+          
+          if (success) {
+            return "Successfully opened Things app and navigated to Anytime";
+          } else {
+            throw new Error("Failed to open Anytime in Things app");
+          }
+        } catch (error) {
+          const errorMessage = `Failed to show Anytime: ${error.message}`;
+          console.error(errorMessage);
+          throw new Error(errorMessage);
+        }
+      },
+    },
+
+    {
+      name: "show_someday",
+      description: "Navigate to the Things app 'Someday' list view. This opens the Things app and displays all tasks and projects scheduled for someday (maybe later).",
+      
+      inputSchema: {
+        type: "object",
+        properties: {},
+        required: [],
+      },
+      
+      handler: async (args) => {
+        try {
+          if (!thingsClient.isThingsAvailable()) {
+            throw new Error("Things app is not available. Make sure you're running on macOS and Things is installed.");
+          }
+          
+          const success = await thingsClient.showList('someday');
+          
+          if (success) {
+            return "Successfully opened Things app and navigated to Someday";
+          } else {
+            throw new Error("Failed to open Someday in Things app");
+          }
+        } catch (error) {
+          const errorMessage = `Failed to show Someday: ${error.message}`;
+          console.error(errorMessage);
+          throw new Error(errorMessage);
+        }
+      },
+    },
+
+    {
+      name: "show_projects",
+      description: "Navigate to the Things app 'Projects' list view. This opens the Things app and displays all active projects.",
+      
+      inputSchema: {
+        type: "object",
+        properties: {},
+        required: [],
+      },
+      
+      handler: async (args) => {
+        try {
+          if (!thingsClient.isThingsAvailable()) {
+            throw new Error("Things app is not available. Make sure you're running on macOS and Things is installed.");
+          }
+          
+          const success = await thingsClient.showList('projects');
+          
+          if (success) {
+            return "Successfully opened Things app and navigated to Projects";
+          } else {
+            throw new Error("Failed to open Projects in Things app");
+          }
+        } catch (error) {
+          const errorMessage = `Failed to show Projects: ${error.message}`;
+          console.error(errorMessage);
+          throw new Error(errorMessage);
+        }
+      },
+    },
+
+    {
+      name: "show_areas",
+      description: "Navigate to the Things app 'Areas' list view. This opens the Things app and displays all areas of responsibility.",
+      
+      inputSchema: {
+        type: "object",
+        properties: {},
+        required: [],
+      },
+      
+      handler: async (args) => {
+        try {
+          if (!thingsClient.isThingsAvailable()) {
+            throw new Error("Things app is not available. Make sure you're running on macOS and Things is installed.");
+          }
+          
+          const success = await thingsClient.showList('areas');
+          
+          if (success) {
+            return "Successfully opened Things app and navigated to Areas";
+          } else {
+            throw new Error("Failed to open Areas in Things app");
+          }
+        } catch (error) {
+          const errorMessage = `Failed to show Areas: ${error.message}`;
+          console.error(errorMessage);
+          throw new Error(errorMessage);
+        }
+      },
+    },
+
+    {
+      name: "show_logbook",
+      description: "Navigate to the Things app 'Logbook' view. This opens the Things app and displays all completed tasks and projects.",
+      
+      inputSchema: {
+        type: "object",
+        properties: {},
+        required: [],
+      },
+      
+      handler: async (args) => {
+        try {
+          if (!thingsClient.isThingsAvailable()) {
+            throw new Error("Things app is not available. Make sure you're running on macOS and Things is installed.");
+          }
+          
+          const success = await thingsClient.showList('logbook');
+          
+          if (success) {
+            return "Successfully opened Things app and navigated to Logbook";
+          } else {
+            throw new Error("Failed to open Logbook in Things app");
+          }
+        } catch (error) {
+          const errorMessage = `Failed to show Logbook: ${error.message}`;
+          console.error(errorMessage);
+          throw new Error(errorMessage);
+        }
+      },
+    },
   ];
 }
