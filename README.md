@@ -170,11 +170,10 @@ Currently implemented tools:
   - Supports: create_workspace, bulk_import, project_hierarchy, advanced_update
   - Enables sophisticated operations beyond simple URL parameters
 
-- **get_things_data**: Retrieve data from Things using x-callback-url
-  - Required: data_type
-  - Data types: projects, todos, areas, tags, lists, specific_item
-  - Optional: filter, item_id, format (json, markdown, csv)
-  - Provides data retrieval capabilities for analysis and reporting
+- **show_filtered_view**: Navigate to specific Things views and items
+  - Required: view_type (today, inbox, upcoming, anytime, someday, projects, areas, logbook)
+  - Optional: item_id (for specific items), search_query (for search-based navigation)
+  - Opens filtered views in Things app since URL scheme doesn't support data retrieval
 
 ## Project Structure
 

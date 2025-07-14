@@ -105,63 +105,50 @@ async function testAdvancedFeatures() {
       }
     }
 
-    // Test Data Retrieval (x-callback-url simulation)
-    console.log('\n\n2. Testing Data Retrieval:');
+    // Test Filtered View Navigation (since Things doesn't support data retrieval)
+    console.log('\n\n2. Testing Filtered View Navigation:');
     console.log('-' .repeat(30));
 
-    const dataRetrievalTests = [
+    const viewNavigationTests = [
       {
-        name: 'Get All Projects',
-        dataType: 'projects',
-        filter: { status: 'open' },
-        format: 'json'
+        name: 'Navigate to Today View',
+        view_type: 'today'
       },
       {
-        name: 'Get Today\'s Todos',
-        dataType: 'todos',
-        filter: { 
-          status: 'open',
-          date_range: {
-            start: new Date().toISOString().split('T')[0],
-            end: new Date().toISOString().split('T')[0]
-          }
-        },
-        format: 'json'
+        name: 'Navigate to Projects View',
+        view_type: 'projects'
       },
       {
-        name: 'Get Work Area Items',
-        dataType: 'todos',
-        filter: { area: 'Work' },
-        format: 'markdown'
+        name: 'Show Specific Item by ID',
+        view_type: 'today',
+        item_id: 'example-item-id-123'
       },
       {
-        name: 'Get Tagged Items',
-        dataType: 'todos',
-        filter: { tag: 'important' },
-        format: 'csv'
+        name: 'Search and Navigate',
+        view_type: 'inbox',
+        search_query: 'important tasks'
       }
     ];
 
-    for (const test of dataRetrievalTests) {
+    for (const test of viewNavigationTests) {
       try {
         console.log(`\n${test.name}:`);
-        console.log(`Data Type: ${test.dataType}`);
-        console.log(`Format: ${test.format}`);
+        console.log(`View Type: ${test.view_type}`);
         
-        if (test.filter) {
-          const filterStr = Object.entries(test.filter)
-            .map(([key, value]) => `${key}=${typeof value === 'object' ? JSON.stringify(value) : value}`)
-            .join(', ');
-          console.log(`Filters: ${filterStr}`);
+        if (test.item_id) {
+          console.log(`Item ID: ${test.item_id}`);
+        }
+        if (test.search_query) {
+          console.log(`Search Query: ${test.search_query}`);
         }
         
-        const success = await client.getThingsData(test.dataType, test.filter, null, test.format);
+        const success = await client.showSpecificItem(test.item_id || test.view_type);
         
         if (success) {
-          console.log(`✅ SUCCESS: Data retrieval request sent successfully`);
-          console.log(`   Note: Actual data would be returned via x-callback-url`);
+          console.log(`✅ SUCCESS: View navigation executed successfully`);
+          console.log(`   Note: Things URL scheme doesn't support data retrieval`);
         } else {
-          console.log(`❌ FAILED: Data retrieval request failed`);
+          console.log(`❌ FAILED: View navigation failed`);
         }
         
       } catch (error) {
@@ -169,60 +156,26 @@ async function testAdvancedFeatures() {
       }
     }
 
-    // Test Export/Import Operations
-    console.log('\n\n3. Testing Export/Import Operations:');
+    // Note about Export/Import Operations
+    console.log('\n\n3. Export/Import Limitations:');
     console.log('-' .repeat(30));
-
-    try {
-      console.log('\nTesting Export Operation:');
-      const exportOptions = {
-        format: 'json',
-        include: ['todos', 'projects', 'areas'],
-        path: '/tmp/things-backup.json'
-      };
-      
-      console.log(`Export Format: ${exportOptions.format}`);
-      console.log(`Export Path: ${exportOptions.path}`);
-      console.log(`Include: ${exportOptions.include.join(', ')}`);
-      
-      const exportSuccess = await client.exportThingsData(exportOptions);
-      
-      if (exportSuccess) {
-        console.log(`✅ SUCCESS: Export operation initiated`);
-      } else {
-        console.log(`❌ FAILED: Export operation failed`);
-      }
-      
-    } catch (error) {
-      console.log(`❌ ERROR: Export operation failed - ${error.message}`);
-    }
-
-    try {
-      console.log('\nTesting Import Operation:');
-      const importOptions = {
-        source: 'json',
-        data: JSON.stringify([
-          { title: 'Imported Task 1', area: 'Imported' },
-          { title: 'Imported Task 2', area: 'Imported' }
-        ]),
-        mapping: { title: 'name', area: 'category' }
-      };
-      
-      console.log(`Import Source: ${importOptions.source}`);
-      console.log(`Data Items: 2 tasks`);
-      console.log(`Field Mapping: title->name, area->category`);
-      
-      const importSuccess = await client.importThingsData(importOptions);
-      
-      if (importSuccess) {
-        console.log(`✅ SUCCESS: Import operation initiated`);
-      } else {
-        console.log(`❌ FAILED: Import operation failed`);
-      }
-      
-    } catch (error) {
-      console.log(`❌ ERROR: Import operation failed - ${error.message}`);
-    }
+    
+    console.log('\n⚠️  Important Note about Data Operations:');
+    console.log('Things URL scheme does NOT support:');
+    console.log('• Data export operations');
+    console.log('• Data import operations'); 
+    console.log('• Data retrieval/reading operations');
+    console.log('');
+    console.log('The URL scheme is designed for:');
+    console.log('• Creating new items (add, add-project)');
+    console.log('• Updating existing items (update, update-project)');
+    console.log('• Navigation (show, search)');
+    console.log('• Complex operations via JSON commands');
+    console.log('');
+    console.log('For data export/import, use:');
+    console.log('• Things app menu: File > Export');
+    console.log('• Things app menu: File > Import');
+    console.log('• Third-party sync services supported by Things');
 
     console.log('\n' + '=' .repeat(50));
     console.log('Advanced features testing completed!');

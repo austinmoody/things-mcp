@@ -455,78 +455,38 @@ export function createAdvancedTools(thingsClient) {
     },
 
     {
-      name: "get_things_data",
-      description: "Retrieve data from Things using x-callback-url support. This tool can fetch information about projects, todos, areas, and other Things data for analysis and reporting.",
+      name: "show_filtered_view",
+      description: "Navigate to Things views with specific filters applied. Since Things doesn't support data retrieval, this tool opens filtered views in the Things app for manual review.",
       
-      // JSON Schema defining the input parameters for data retrieval
+      // JSON Schema defining the input parameters for filtered views
       inputSchema: {
         type: "object",
         properties: {
-          data_type: {
+          view_type: {
             type: "string",
-            description: "Type of data to retrieve from Things",
-            enum: ["projects", "todos", "areas", "tags", "lists", "specific_item"]
-          },
-          filter: {
-            type: "object",
-            description: "Filter criteria for data retrieval",
-            properties: {
-              status: {
-                type: "string",
-                description: "Filter by completion status",
-                enum: ["open", "completed", "canceled", "all"]
-              },
-              area: {
-                type: "string",
-                description: "Filter by specific area"
-              },
-              project: {
-                type: "string", 
-                description: "Filter by specific project"
-              },
-              tag: {
-                type: "string",
-                description: "Filter by specific tag"
-              },
-              date_range: {
-                type: "object",
-                description: "Filter by date range",
-                properties: {
-                  start: {
-                    type: "string",
-                    description: "Start date (YYYY-MM-DD)"
-                  },
-                  end: {
-                    type: "string",
-                    description: "End date (YYYY-MM-DD)"
-                  }
-                }
-              }
-            }
+            description: "Type of view to open in Things",
+            enum: ["today", "inbox", "upcoming", "anytime", "someday", "projects", "areas", "logbook"]
           },
           item_id: {
             type: "string",
-            description: "Specific item ID to retrieve (for 'specific_item' data_type)"
+            description: "Specific item ID to show (for navigating to specific projects, areas, or todos)"
           },
-          format: {
+          search_query: {
             type: "string",
-            description: "Output format for the retrieved data",
-            enum: ["json", "markdown", "csv"],
-            default: "json"
+            description: "Optional search query to apply when opening the view"
           }
         },
-        required: ["data_type"],
+        required: ["view_type"],
       },
       
       /**
-       * Handler function for the get_things_data tool
+       * Handler function for the show_filtered_view tool
        * 
-       * This function retrieves data from Things using x-callback-url support.
-       * Note: This is a mock implementation as actual x-callback-url requires
-       * Things app support and URL scheme extensions.
+       * This function opens specific views in Things since direct data retrieval
+       * is not supported by the Things URL scheme.
        * 
        * @param {Object} args - Arguments passed from the MCP client
-       * @returns {Promise<string>} - Retrieved data or error message
+       * @returns {Promise<string>} - Success or error message
        */
       handler: async (args) => {
         try {
@@ -536,39 +496,38 @@ export function createAdvancedTools(thingsClient) {
           }
           
           // Validate required fields
-          if (!args.data_type) {
-            throw new Error("Data type is required");
+          if (!args.view_type) {
+            throw new Error("View type is required");
           }
           
-          // For specific_item requests, require item_id
-          if (args.data_type === 'specific_item' && !args.item_id) {
-            throw new Error("Item ID is required for specific_item data type");
+          let success;
+          let message;
+          
+          if (args.item_id) {
+            // Show specific item by ID
+            success = await thingsClient.showSpecificItem(args.item_id);
+            message = `Successfully opened specific item with ID: ${args.item_id}`;
+          } else if (args.search_query) {
+            // Open search with query
+            success = await thingsClient.search(args.search_query);
+            message = `Successfully opened search for: "${args.search_query}"`;
+          } else {
+            // Open standard view
+            success = await thingsClient.showList(args.view_type);
+            message = `Successfully opened ${args.view_type} view in Things`;
           }
           
-          // Execute the data retrieval command
-          const data = await thingsClient.getThingsData(args.data_type, args.filter, args.item_id, args.format);
-          
-          if (data) {
-            let message = `Successfully retrieved ${args.data_type} data from Things`;
-            
-            // Add filter summary if filters were applied
-            if (args.filter) {
-              const appliedFilters = Object.keys(args.filter).filter(key => args.filter[key] !== undefined);
-              if (appliedFilters.length > 0) {
-                message += `\nApplied filters: ${appliedFilters.join(', ')}`;
-              }
-            }
-            
-            message += `\nFormat: ${args.format || 'json'}`;
-            message += `\n\nNote: This feature requires Things app support for x-callback-url data retrieval.`;
-            message += `\nCurrent implementation opens Things to display the requested data.`;
+          if (success) {
+            message += `\n\nNote: Things URL scheme doesn't support data retrieval.`;
+            message += `\nThis tool opens the requested view in Things for manual review.`;
+            message += `\nFor data export, use Things' built-in export features.`;
             
             return message;
           } else {
-            throw new Error("Failed to retrieve data from Things app");
+            throw new Error("Failed to open view in Things app");
           }
         } catch (error) {
-          const errorMessage = `Failed to retrieve Things data: ${error.message}`;
+          const errorMessage = `Failed to show filtered view: ${error.message}`;
           console.error(errorMessage);
           throw new Error(errorMessage);
         }

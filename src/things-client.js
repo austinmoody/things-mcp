@@ -437,119 +437,35 @@ export class ThingsClient {
   }
 
   /**
-   * Retrieve data from Things using x-callback-url
+   * Show a specific item by ID in Things
    * 
-   * This method attempts to retrieve data from Things and return it.
-   * Note: This requires Things app support for data retrieval callbacks.
+   * This method opens a specific item (todo, project, area) in Things
+   * using the show command with an ID parameter.
    * 
-   * @param {string} dataType - Type of data to retrieve
-   * @param {Object} filter - Filter criteria for data retrieval
-   * @param {string} itemId - Specific item ID (for single item requests)
-   * @param {string} format - Output format for the data
+   * @param {string} itemId - The unique identifier of the item to show
    * @returns {Promise<boolean>} - True if successful
    */
-  async getThingsData(dataType, filter = {}, itemId = null, format = 'json') {
+  async showSpecificItem(itemId) {
     // Validate required parameters
-    if (!dataType) {
-      throw new Error('Data type is required for data retrieval');
+    if (!itemId) {
+      throw new Error('Item ID is required to show specific item');
     }
 
-    // Build parameters for data retrieval
-    const params = {
-      'data-type': dataType,
-      format: format
-    };
-
-    // Add item ID if provided
-    if (itemId) {
-      params.id = itemId;
-    }
-
-    // Add filter parameters if provided
-    if (filter.status) params.status = filter.status;
-    if (filter.area) params.area = filter.area;
-    if (filter.project) params.project = filter.project;
-    if (filter.tag) params.tag = filter.tag;
-    if (filter.date_range) {
-      if (filter.date_range.start) params['start-date'] = filter.date_range.start;
-      if (filter.date_range.end) params['end-date'] = filter.date_range.end;
-    }
-
-    // Add x-callback-url parameters for data return
-    // Note: This would require a local server to receive the callback
-    params['x-callback-url'] = 'things-mcp://callback';
-    params['x-success'] = 'things-mcp://success';
-    params['x-error'] = 'things-mcp://error';
-
-    // Use a special 'get-data' command (conceptual - may not exist in Things)
-    return this.executeCommand('get-data', params);
+    // Use the show command with the item ID
+    return this.executeCommand('show', { id: itemId });
   }
 
   /**
-   * Create a backup export of Things data
+   * Note: Things URL scheme does not support export/import operations
    * 
-   * This method triggers an export operation in Things to create
-   * a backup of user data in various formats.
+   * For data export/import, users should use:
+   * 1. Things app's built-in export feature (File > Export)
+   * 2. Things app's built-in import feature (File > Import)
+   * 3. Third-party sync services supported by Things
    * 
-   * @param {Object} exportOptions - Export configuration options
-   * @param {string} exportOptions.format - Export format (json, csv, xml)
-   * @param {string} [exportOptions.path] - Export file path
-   * @param {Array} [exportOptions.include] - Data types to include
-   * @returns {Promise<boolean>} - True if successful
+   * The URL scheme is designed for automation and integration,
+   * not for bulk data operations.
    */
-  async exportThingsData(exportOptions) {
-    // Validate required parameters
-    if (!exportOptions || !exportOptions.format) {
-      throw new Error('Export format is required');
-    }
-
-    // Build parameters for export
-    const params = {
-      format: exportOptions.format
-    };
-
-    // Add optional parameters
-    if (exportOptions.path) params.path = exportOptions.path;
-    if (exportOptions.include && Array.isArray(exportOptions.include)) {
-      params.include = exportOptions.include.join(',');
-    }
-
-    // Use export command (conceptual)
-    return this.executeCommand('export', params);
-  }
-
-  /**
-   * Import data into Things from various sources
-   * 
-   * This method handles importing data from external sources
-   * into Things with proper formatting and validation.
-   * 
-   * @param {Object} importOptions - Import configuration options
-   * @param {string} importOptions.source - Import source (file, url, json)
-   * @param {string} importOptions.data - Import data or path
-   * @param {Object} [importOptions.mapping] - Field mapping configuration
-   * @returns {Promise<boolean>} - True if successful
-   */
-  async importThingsData(importOptions) {
-    // Validate required parameters
-    if (!importOptions || !importOptions.source || !importOptions.data) {
-      throw new Error('Import source and data are required');
-    }
-
-    // Build parameters for import
-    const params = {
-      source: importOptions.source,
-      data: importOptions.data
-    };
-
-    // Add mapping if provided
-    if (importOptions.mapping) {
-      params.mapping = JSON.stringify(importOptions.mapping);
-    }
-
-    // Use import command (conceptual)
-    return this.executeCommand('import', params);
-  }
 
   /**
    * Validate that Things app is available
